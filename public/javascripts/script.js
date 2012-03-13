@@ -205,32 +205,6 @@ function preparePaper()
       
       paper = Raphael('graphic', theWidth, 10000);
       $('svg').removeAttr('height');
-}
-
-var paper;
-var iPos = 0;
-var jPos = 0;
-var jquiDialog;
-var theWidth;
-var theData;
-
-function preparePaper()
-{
-   var newWidth = window.innerWidth;
-   if( newWidth > 1366 || theWidth != 1366) {
-      if(newWidth <= 1366 ) {
-         theWidth = 1366;
-      }
-      else {
-         theWidth = newWidth;
-      }
-      
-      if( paper ) {
-         paper.remove();
-      }
-      
-      paper = Raphael('graphic', theWidth, 10000);
-      $('svg').removeAttr('height');
 
       return 1;
    }
