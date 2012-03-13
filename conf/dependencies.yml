@@ -1,0 +1,6 @@
+# Application dependencies
+
+require:
+    - play            -> crud
+    - net.sf.flexjson -> flexjson 2.1
+
