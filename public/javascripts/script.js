@@ -178,9 +178,33 @@ function createGraphic()
    
    paper.renderfix();
    
-   
    $('svg').attr("height",iPos);
-   console.log(iPos);
+}
+
+var paper;
+var iPos = 0;
+var jPos = 0;
+var jquiDialog;
+var theWidth;
+var theData;
+
+function preparePaper()
+{
+   var newWidth = window.innerWidth;
+   if( newWidth > 1366 || theWidth != 1366) {
+      if(newWidth <= 1366 ) {
+         theWidth = 1366;
+      }
+      else {
+         theWidth = newWidth;
+      }
+      
+      if( paper ) {
+         paper.remove();
+      }
+      
+      paper = Raphael('graphic', theWidth, 10000);
+      $('svg').removeAttr('height');
 }
 
 var paper;
@@ -208,13 +232,6 @@ function preparePaper()
       paper = Raphael('graphic', theWidth, 10000);
       $('svg').removeAttr('height');
 
-/*
-      var obj = document.getElementById('theSVG'); // reference to the object tag
-      var svgdoc = obj.contentDocument; // reference to the SVG document
-      var svgelem = svgdoc.documentElement; // reference to the SVG element
-
-      console.log(svgelem.getAttribute("height"));
-      */
       return 1;
    }
    return 0;
