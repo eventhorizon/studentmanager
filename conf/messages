@@ -1,0 +1,30 @@
+# You can specialize this file for each language.
+# For exemple, for french create a messages.fr file
+#
+firstName=Vorname
+lastName=Nachname
+name=Name
+startDate=Beginn
+endDate=Ende
+team=Gruppe
+parent=Besitzer
+phoneNumber=Telefonnummer
+eMail=E-Mail-Adresse
+university=Universität
+timeslotRequest=Angefragter Zeitraum
+requester=Anfragender
+student=Student
+
+CRUDstudents=Studenten
+CRUDteams=Gruppen
+CRUDemployees=Mitarbeiter
+CRUDuniversities=Universitäten
+CRUDTimeslotAssignments=Zugewiesene Zeiträume
+CRUDtimeslotRequests=Angefragte Zeiträume
+
+AssignedTimeslot=Zugewiesener Zeitraum
+Employee=Mitarbeiter
+Team=Gruppe
+Student=Student
+University=Universität
+TimeslotRequest=Angefragter Zeitraum
