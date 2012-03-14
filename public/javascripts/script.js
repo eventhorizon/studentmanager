@@ -55,10 +55,26 @@ function update() {
    });
 }
 
-Date.prototype.getDOY = function() {
-   var onejan = new Date(this.getFullYear(),0,1);
-   return Math.ceil((this - onejan) / 86400000);
+//Date.prototype.getDOY = function() {
+//   var onejan = new Date(this.getFullYear(),0,1);
+//   return Math.ceil((this - onejan) / 86400000);
+//}
+//
+//Date.prototype.getDOS = function() {
+//   return Math.ceil(this / 86400000);
+//}
+Date.prototype.getWeek = function() {
+	var onejan = new Date(this.getFullYear(),0,1);
+	return Math.ceil((((this - onejan) / 86400000) + onejan.getDay())/7);
+	} 
+
+var startDate = new Date(2012, 0, 1);
+var   endDate = new Date(2012,11,31);
+
+var getDOS = function(date) {
+   return Math.ceil( (date - startDate ) / 86400000);
 }
+
 
 function attachCssClass(raphaelObject, cssClassName)
 {
@@ -101,8 +117,8 @@ function createGraphic()
    
    
    
-   var startMillis = new Date(2012, 0, 1, 0, 0, 0, 0);
-   var   endMillis = new Date(2013, 0, 1, 0, 0, 0, 0);
+   var startMillis = startDate; // new Date(2012, 0, 1, 0, 0, 0, 0);
+   var   endMillis =   endDate; // new Date(2013, 0, 1, 0, 0, 0, 0);
    var shownMilli  = endMillis.getTime() - startMillis.getTime();
    var oneDayMillis = 24*60*60*1000;
    var oneWeekMillis = 7*oneDayMillis;
@@ -120,6 +136,12 @@ function createGraphic()
       var text = paper.text(i * pixelPerWeek + (pixelPerWeek/2), 10, 'W'+((i%52)+1));
       attachCssClass(text, 'weekBlocks');
    }
+   
+   //startDate + millisaday 
+   
+   
+   
+   
 
    iPos = 25;
 
@@ -127,8 +149,12 @@ function createGraphic()
    { 
       jPos = 0;
 
-      var      x = (new Date(data[i].startDate).getDOY()                            - 1) * pixelPerDay;
-      var  width = (new Date(data[i].endDate).getDOY()     - new Date(data[i].startDate).getDOY()  + 1) * pixelPerDay;
+//      var      x = (new Date(data[i].startDate).getDOY()                            - 1) * pixelPerDay;
+//      var  width = (new Date(data[i].endDate).getDOY()     - new Date(data[i].startDate).getDOY()  + 1) * pixelPerDay;
+//      var      x = (data[i].startDate.getDOS()                              - 1) * pixelPerDay;
+//      var  width = (data[i].  endDate.getDOS() - data[i].startDate.getDOS() + 1) * pixelPerDay;
+      var      x = (getDOS(data[i].startDate)                             - 1) * pixelPerDay;
+      var  width = (getDOS(data[i].  endDate) - getDOS(data[i].startDate) + 1) * pixelPerDay;
 
       var      y = iPos+jPos;
       var height = 0;
@@ -138,8 +164,12 @@ function createGraphic()
       var approvedCoords = new Array();
       for(var j=0; j < data[i].assignedTimeslots.length; j++)
       {
-         var      jx = (new Date(data[i].assignedTimeslots[j].startDate).getDOY()                                 - 1) * pixelPerDay;
-         var  jwidth = (new Date(data[i].assignedTimeslots[j].endDate).getDOY() - new Date(data[i].assignedTimeslots[j].startDate).getDOY()  + 1) * pixelPerDay;
+//         var      jx = (new Date(data[i].assignedTimeslots[j].startDate).getDOY()                                 - 1) * pixelPerDay;
+//         var  jwidth = (new Date(data[i].assignedTimeslots[j].endDate).getDOY() - new Date(data[i].assignedTimeslots[j].startDate).getDOY()  + 1) * pixelPerDay;
+//          var      jx = (data[i].assignedTimeslots[j].startDate.getDOS()                                                   - 1) * pixelPerDay;
+//          var  jwidth = (data[i].assignedTimeslots[j].  endDate.getDOS() - data[i].assignedTimeslots[j].startDate.getDOS() + 1) * pixelPerDay;
+          var      jx = (getDOS(data[i].assignedTimeslots[j].startDate)                                                  - 1) * pixelPerDay;
+          var  jwidth = (getDOS(data[i].assignedTimeslots[j].  endDate) - getDOS(data[i].assignedTimeslots[j].startDate) + 1) * pixelPerDay;
 
          var      jy = iPos + jPos;
          var jheight = 20;
@@ -240,4 +270,19 @@ $(document).ready(function() {
          300
       )
    );
+   
+   $(".datepicker").datepicker();
+   $(".datepicker.start").change( function() {
+	   startDate = new Date($('.datepicker.start').datepicker( "getDate" ));
+	   update();
+   });
+   $(".datepicker.end"  ).change( function() {
+	     endDate = new Date($('.datepicker.end'  ).datepicker( "getDate" ));
+	   update();
+   });
+   
+
+   $(".datepicker.start").datepicker( "setDate" , startDate );
+   $(".datepicker.end"  ).datepicker( "setDate" ,   endDate );
+   
 });
