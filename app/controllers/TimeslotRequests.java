@@ -22,14 +22,12 @@ public class TimeslotRequests extends Controller
                ).exclude("*");
       
       String returnString = "[";
-      
+      int i = 0;
       for( Team team : teams )
       {
-         returnString += teamSerializer.serialize( team ) + ", ";
+     	 if( i++ > 0 ) { returnString += ", "; }
+         returnString += teamSerializer.serialize( team );
       }
-      
-      returnString = returnString.substring(0,returnString.length()-2);
-      
       returnString += "]";
 
       return returnString;
@@ -56,17 +54,13 @@ public class TimeslotRequests extends Controller
             "student.lastName"
          ).exclude("*");
       
-      //timeslotSerializer.serialize( requests );
-      
       String returnString = "[";
-      
+      int i = 0;
       for( TimeslotRequest request : requests )
       {
-         returnString += timeslotSerializer.serialize( request ) + ", ";
+    	 if( i++ > 0 ) { returnString += ", "; }
+         returnString += timeslotSerializer.serialize( request );
       }
-      
-      returnString = returnString.substring(0,returnString.length()-2);
-      
       returnString += "]";
       
       
@@ -74,9 +68,4 @@ public class TimeslotRequests extends Controller
       
       renderJSON( returnString );
    }
-   
-//   public static void details()
-//   {
-//      TimeslotRequest.findById( id )
-//   }
 }
