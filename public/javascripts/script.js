@@ -55,14 +55,6 @@ function update() {
    });
 }
 
-//Date.prototype.getDOY = function() {
-//   var onejan = new Date(this.getFullYear(),0,1);
-//   return Math.ceil((this - onejan) / 86400000);
-//}
-//
-//Date.prototype.getDOS = function() {
-//   return Math.ceil(this / 86400000);
-//}
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(),0,1);
 	return Math.ceil((((this - onejan) / 86400000) + onejan.getDay())/7);
@@ -75,14 +67,11 @@ var getDOS = function(date) {
    return Math.ceil( (date - startDate ) / 86400000);
 }
 
-
 function attachCssClass(raphaelObject, cssClassName)
 {
    $(raphaelObject.node).removeAttr('fill').removeAttr('stroke').removeAttr('style');
    (raphaelObject.node.className ? raphaelObject.node.className.baseVal = cssClassName : raphaelObject.node.setAttribute('class',  cssClassName));
 }
-
-
 
 var teams;
 var teamIds;
@@ -94,31 +83,28 @@ function findName(id) {
    return findName(teams[id].parentId) + " / " + teams[id].name;
 }
 
+function sortfunc(a,b)
+{
+	return teams[a.requester.team.id].fullName.localeCompare(teams[b.requester.team.id].fullName);
+}
+
+var teams = new Array();
 
 function createGraphic()
-{
-   var data = theData.requests;
-   
+{  
    teams = new Array();
    teamIds = new Array();
-   //var teams = new Array();
-   //var teamIds = new Array();
    var tteams = theData.teams;
    for(var i = 0; i < tteams.length; i++) {
-      //console.log(tteams[i].id);
       teams[tteams[i].id] = { "name":tteams[i].name, "fullName": tteams[i].name, "parentId": tteams[i].parent != null ? tteams[i].parent.id : null};
       teamIds[i] = tteams[i].id;
    }
    for(var i = 0; i < teamIds.length; i++) {
       teams[teamIds[i]].fullName = findName(teamIds[i]);
-      //console.log(teams[teamIds[i]].fullName);
    }
    
-   
-   
-   
-   var startMillis = startDate; // new Date(2012, 0, 1, 0, 0, 0, 0);
-   var   endMillis =   endDate; // new Date(2013, 0, 1, 0, 0, 0, 0);
+   var startMillis = startDate;
+   var   endMillis =   endDate;
    var shownMilli  = endMillis.getTime() - startMillis.getTime();
    var oneDayMillis = 24*60*60*1000;
    var oneWeekMillis = 7*oneDayMillis;
@@ -137,22 +123,14 @@ function createGraphic()
       attachCssClass(text, 'weekBlocks');
    }
    
-   //startDate + millisaday 
-   
-   
-   
-   
+   var data = theData.requests.sort(sortfunc);
 
    iPos = 25;
 
    for(var i=0; i < data.length; i++)
    { 
       jPos = 0;
-
-//      var      x = (new Date(data[i].startDate).getDOY()                            - 1) * pixelPerDay;
-//      var  width = (new Date(data[i].endDate).getDOY()     - new Date(data[i].startDate).getDOY()  + 1) * pixelPerDay;
-//      var      x = (data[i].startDate.getDOS()                              - 1) * pixelPerDay;
-//      var  width = (data[i].  endDate.getDOS() - data[i].startDate.getDOS() + 1) * pixelPerDay;
+      
       var      x = (getDOS(data[i].startDate)                             - 1) * pixelPerDay;
       var  width = (getDOS(data[i].  endDate) - getDOS(data[i].startDate) + 1) * pixelPerDay;
 
@@ -164,10 +142,6 @@ function createGraphic()
       var approvedCoords = new Array();
       for(var j=0; j < data[i].assignedTimeslots.length; j++)
       {
-//         var      jx = (new Date(data[i].assignedTimeslots[j].startDate).getDOY()                                 - 1) * pixelPerDay;
-//         var  jwidth = (new Date(data[i].assignedTimeslots[j].endDate).getDOY() - new Date(data[i].assignedTimeslots[j].startDate).getDOY()  + 1) * pixelPerDay;
-//          var      jx = (data[i].assignedTimeslots[j].startDate.getDOS()                                                   - 1) * pixelPerDay;
-//          var  jwidth = (data[i].assignedTimeslots[j].  endDate.getDOS() - data[i].assignedTimeslots[j].startDate.getDOS() + 1) * pixelPerDay;
           var      jx = (getDOS(data[i].assignedTimeslots[j].startDate)                                                  - 1) * pixelPerDay;
           var  jwidth = (getDOS(data[i].assignedTimeslots[j].  endDate) - getDOS(data[i].assignedTimeslots[j].startDate) + 1) * pixelPerDay;
 
