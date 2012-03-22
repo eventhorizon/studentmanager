@@ -22,3 +22,7 @@ header h1 img { vertical-align:text-bottom;}
 
 footer { color:lightgrey; font-size:10px; text-align:right; padding:3px 20px; margin-top:40px; }
 footer a { color:inherit; text-decoration:inherit; }
+
+rect.outerSortArea { fill:rgba(223,0,36,0.5); stroke:none; cursor:pointer; }
+text.outerSortText  tspan { fill:#666; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}
+text.outerSortText   { fill:#666; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}

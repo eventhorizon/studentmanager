@@ -1,39 +1,3 @@
-clickCallbackRequestedTimeslot = function(event)
-{
-   var theId = '';
-   
-   if(event.target.nodeName.toLowerCase() === 'tspan')
-   {
-      theId = $(event.target).parent().data( "req_id" );
-   }
-   else
-   {
-      theId = $(event.target).data( "req_id" );
-   }
-   
-   $("#jquiDialog > iframe").attr("src", '../admin/crudtimeslotrequests/' + theId);
-   jquiDialog.dialog( "option", "title", 'Modify Request...' );
-   jquiDialog.dialog('open');
-}
-
-clickCallbackAssignedTimeslot = function(event)
-{
-   var theId = '';
-   
-   if(event.target.nodeName.toLowerCase() === 'tspan')
-   {
-      theId = $(event.target).parent().data( "ass_id" );
-   }
-   else
-   {
-      theId = $(event.target).data( "ass_id" );
-   }
-   
-   $("#jquiDialog > iframe").attr("src", '../admin/crudtimeslotassignments/' + theId);
-   jquiDialog.dialog( "option", "title", 'Modify Assignment...' );
-   jquiDialog.dialog('open');
-}
-
 function update() {
    $.ajax({
      url: '../timeslotRequests/listEnhanced/',
@@ -55,86 +19,67 @@ function update() {
    });
 }
 
-Date.prototype.getWeek = function() {
-	var onejan = new Date(this.getFullYear(),0,1);
-	return Math.ceil((((this - onejan) / 86400000) + onejan.getDay())/7);
-	} 
+
+
 
 var startDate = new Date(2012, 0, 1);
 var   endDate = new Date(2012,11,31);
 
-var getDOS = function(date) {
+
+function getDOS(date) {
    return Math.ceil( (date - startDate ) / 86400000);
 }
 
-function attachCssClass(raphaelObject, cssClassName)
-{
-   $(raphaelObject.node).removeAttr('fill').removeAttr('stroke').removeAttr('style');
-   (raphaelObject.node.className ? raphaelObject.node.className.baseVal = cssClassName : raphaelObject.node.setAttribute('class',  cssClassName));
-}
-
-var teams;
-var teamIds;
-
-function findName(id) {
-   if( teams[id].parentId == null) {
-      return teams[id].name;
-   }
-   return findName(teams[id].parentId) + " / " + teams[id].name;
-}
-
-function sortfunc(a,b)
-{
-	return teams[a.requester.team.id].fullName.localeCompare(teams[b.requester.team.id].fullName);
-}
-
-var teams = new Array();
-
 function createGraphic()
 {  
-   teams = new Array();
-   teamIds = new Array();
-   var tteams = theData.teams;
-   for(var i = 0; i < tteams.length; i++) {
-      teams[tteams[i].id] = { "name":tteams[i].name, "fullName": tteams[i].name, "parentId": tteams[i].parent != null ? tteams[i].parent.id : null};
-      teamIds[i] = tteams[i].id;
-   }
-   for(var i = 0; i < teamIds.length; i++) {
-      teams[teamIds[i]].fullName = findName(teamIds[i]);
-   }
+   var teams = initTeams(theData.teams);
+   var data  = initRequestedTimeslots(theData.requests, teams);
    
-   var startMillis = startDate;
-   var   endMillis =   endDate;
-   var shownMilli  = endMillis.getTime() - startMillis.getTime();
-   var oneDayMillis = 24*60*60*1000;
-   var oneWeekMillis = 7*oneDayMillis;
-
-   var pixelTotal   = theWidth;
-   var pixelPerDay  = pixelTotal / (shownMilli / oneDayMillis);
-   var pixelPerWeek = 7*pixelPerDay;
-
    paper.clear();
-
-   for(var i = 0; i < Math.ceil(shownMilli/oneWeekMillis); i++)
-   {
-      var rect = paper.rect(i * pixelPerWeek, 0, pixelPerWeek, 20);
-      attachCssClass(rect, 'weekBlocks');
-      var text = paper.text(i * pixelPerWeek + (pixelPerWeek/2), 10, 'W'+((i%52)+1));
-      attachCssClass(text, 'weekBlocks');
-   }
+   var pixelPerDay = initTimelineHeadlines(startDate, endDate, theWidth, paper);
    
-   var data = theData.requests.sort(sortfunc);
-
    iPos = 25;
+   var currentStartOfOuterSortAreaY = iPos - 3;
+   var currentEndOfOuterSortAreaY = iPos - 3;
+   var currentGroupId;
 
    for(var i=0; i < data.length; i++)
    { 
+	   if( i == 0 ) {  }
+	   if( currentGroupId == null ) { console.log('Starting at Y: ' + currentStartOfOuterSortAreaY); } //currentGroupId = data[i].requester.team.id; }
+	   else if ( currentGroupId != data[i].requester.team.id ) { 
+		   iPos += 10;
+	   
+		   //finalize outer sort area
+		   currentEndOfOuterSortAreaY = iPos -12;
+		   console.log('Ending at Y: ' + currentEndOfOuterSortAreaY); 
+		   
+		   
+		   var jrect = paper.rect(10, currentStartOfOuterSortAreaY, 25, currentEndOfOuterSortAreaY-currentStartOfOuterSortAreaY, 3);
+	         attachCssClass(jrect, 'outerSortArea');
+	         //$(jrect.node).data( "ass_id", data[i].assignedTimeslots[j].id );
+	         //jrect.click(clickCallbackAssignedTimeslot);
+
+	         var text = paper.text(10 + (25/2), currentEndOfOuterSortAreaY-(currentEndOfOuterSortAreaY-currentStartOfOuterSortAreaY)/2, teams[data[i-1].requester.team.id].fullName );
+	         attachCssClass(text, 'outerSortText');
+	         $(text.node).data( "team_id", data[i-1].requester.team.id );
+	         text.attr({'text-anchor': 'left'});
+	         //text.click(clickCallbackRequestedTimeslot);
+	         
+	         
+	         currentStartOfOuterSortAreaY = iPos - 5;
+	         console.log('Starting at Y: ' + currentStartOfOuterSortAreaY);
+	         
+
+	   }
+	   currentGroupId = data[i].requester.team.id;
+	   
       jPos = 0;
       
       var      x = (getDOS(data[i].startDate)                             - 1) * pixelPerDay;
       var  width = (getDOS(data[i].  endDate) - getDOS(data[i].startDate) + 1) * pixelPerDay;
 
-      var      y = iPos+jPos;
+      var      y = iPos;//+jPos;
       var height = 0;
 
       jPos += 30;
@@ -156,6 +101,7 @@ function createGraphic()
       iPos +=5;
       height = iPos+jPos-y;
 
+      console.log('Paiting Y: ' + y + " - Yend: " + (iPos+jPos));
       var rect = paper.rect(x, y, width, height, 10);
       attachCssClass(rect, 'requested');
       
@@ -178,6 +124,25 @@ function createGraphic()
       }
 
       iPos = y+height+5;
+      
+      //finalize outer sort
+      if( i >= data.length-1) {
+  		   iPos += 10;
+    		   
+   		   //finalize outer sort area
+   		   currentEndOfOuterSortAreaY = iPos -12;
+   		   console.log('Ending at Y: ' + currentEndOfOuterSortAreaY); 
+   		   
+   		   
+   		   var jrect = paper.rect(10, currentStartOfOuterSortAreaY, 25, currentEndOfOuterSortAreaY-currentStartOfOuterSortAreaY, 3);
+   	         attachCssClass(jrect, 'outerSortArea');
+
+	         var text = paper.text(10 + (25/2), currentEndOfOuterSortAreaY-(currentEndOfOuterSortAreaY-currentStartOfOuterSortAreaY)/2, teams[data[i-1].requester.team.id].fullName );
+	         attachCssClass(text, 'outerSortText');
+	         $(text.node).data( "team_id", data[i-1].requester.team.id );
+	         text.attr({'text-anchor': 'left'});
+	         //text.click(clickCallbackRequestedTimeslot);
+      }
    }
    
    paper.renderfix();
@@ -188,7 +153,6 @@ function createGraphic()
 var paper;
 var iPos = 0;
 var jPos = 0;
-var jquiDialog;
 var theWidth;
 var theData;
 
@@ -219,20 +183,6 @@ $(document).ready(function() {
    
    preparePaper();
    update();
-   
-   jquiDialog = $('#jquiDialog').dialog(
-      {
-         autoOpen: false,
-         closeOnEscape: true,
-         modal:true,
-         width:'1040',
-         close: function(event, ui)
-            {
-               update();
-               $("#jquiDialog > iframe").attr("src", 'about:blank');
-            }
-      }
-   );
    
    $(window).resize(
       $.debounce(
