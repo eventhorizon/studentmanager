@@ -47,6 +47,7 @@ public class TimeslotRequests extends Controller
             "assignedTimeslots.endDate",
             "assignedTimeslots.student.firstName",
             "assignedTimeslots.student.lastName",
+            "requester.id",
             "requester.firstName",
             "requester.lastName",
             "requester.team.id",
