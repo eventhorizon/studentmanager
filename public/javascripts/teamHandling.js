@@ -28,5 +28,25 @@ function initTeams(tteams)
       teams[teamIds[i]].fullName = findName(teamIds[i], teams);
    }
 
+   attachAllParentsToTeams(teams, teamIds);
+
    return teams;
+}
+
+function attachAllParentsToTeams(teams, teamIds)
+{
+   for( var i = 0; i < teamIds.length; i++)
+   {
+      teams[teamIds[i]].structure = createTeamStructure( teamIds[i], teams, teamIds );
+   }
+}
+
+function createTeamStructure( teamId, teams, teamIds )
+{
+   var structure = new Array();
+   structure.push(teamId);
+   if( teams[teamId].parentId != null ) {
+      structure.push.apply(structure, createTeamStructure( teams[teamId].parentId, teams, teamIds ));
+   }
+   return structure;
 }

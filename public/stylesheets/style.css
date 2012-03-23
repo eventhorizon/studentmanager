@@ -2,7 +2,7 @@
 
 rect.approved         { fill:#090; stroke:none; cursor:pointer; }
 text.approved   tspan { fill:#fff; stroke:none; cursor:pointer; font-size:12px; font-weight:normal; font-family:verdana, sans-serif; }
-rect.requested        { fill:#ddd; stroke:none; }
+rect.requested        { fill:#ddd; stroke:none; cursor:pointer; }
 text.requested  tspan { fill:#666; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif;}
 rect.weekBlocks       { fill:#ddd; stroke:lightgrey; }
 text.weekBlocks tspan { fill:#666; stroke:none; font-size:10px; font-weight:normal; font-family:verdana, sans-serif; }
@@ -24,9 +24,11 @@ footer { color:lightgrey; font-size:10px; text-align:right; padding:3px 20px; ma
 footer a { color:inherit; text-decoration:inherit; }
 
 rect.outerSortArea { fill:rgba(223,0,36,0.5); stroke:none; cursor:pointer; }
-text.outerSortText  tspan { fill:#666; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}
-text.outerSortText   { fill:#666; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}
-
-rect.innerSortArea { fill:rgba(180,180,180,0.5); stroke:none; cursor:pointer; }
+/*rect.outerSortArea:hover { fill:rgba(223,0,36,1); }*/
+text.outerSortText  tspan { fill:#666; fill:white; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}
+/*text.outerSortText   { fill:#666; fill:white; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}*/
+/*
+rect.innerSortArea { fill:rgba(180,180,180,0.5); stroke:red; cursor:pointer; }
 text.innerSortText  tspan { fill:#666; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}
 text.innerSortText   { fill:#666; stroke:none; cursor:pointer; font-size:14px; font-weight:bold;   font-family:verdana, sans-serif; text-anchor:left;}
+*/

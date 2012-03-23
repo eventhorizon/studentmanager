@@ -39,6 +39,14 @@ function clickCallbackAssignedTimeslot(event)
 }
 
 /*
+ * Concrete callback for click event on teams.
+ */
+function clickCallbackTeam(event)
+{
+   handleClickForPopupCallback(event, 'team_id', '../admin/crudteams/', 'Modify Team');
+}
+
+/*
  * Main config.
  */
 var jquiDialog;

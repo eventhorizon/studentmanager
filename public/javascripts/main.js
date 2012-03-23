@@ -26,44 +26,6 @@ function getDOS(date)
    return Math.ceil((date - startDate) / 86400000);
 }
 
-function createSAL1(salYStart, salYEnd, teams, teamId)
-{
-   var salXOffset   = 10;
-   var salWidth     = 25;
-   var salBorderRad = 3;
-   
-   var salHeight = salYEnd - salYStart;
-   
-   var jrect = paper.rect(salXOffset, salYStart, salWidth, salHeight, salBorderRad);
-   attachCssClass(jrect, 'outerSortArea');
-   
-   var teamFullName = teams[teamId].fullName; 
-   var text = paper.text(salXOffset + (salWidth / 2), salYEnd - (salHeight / 2), teamFullName);
-   attachCssClass(text, 'outerSortText');
-   //$(text.node).data("team_id", teamId);
-   text.attr({ 'text-anchor' : 'left' });
-   // text.click(clickCallbackRequestedTimeslot);
-}
-
-function createSAL2(salYStart, salYEnd, requester)
-{
-   var salXOffset   = 40;
-   var salWidth     = 25;
-   var salBorderRad = 3;
-   
-   var salHeight = salYEnd - salYStart;
-   
-   var jrect = paper.rect(salXOffset, salYStart, salWidth, salHeight, salBorderRad);
-   attachCssClass(jrect, 'innerSortArea');
-   
-   var requesterFullName = requester.lastName + ", " + requester.firstName; 
-   var text = paper.text(salXOffset + (salWidth / 2), salYEnd - (salHeight / 2), requesterFullName);
-   attachCssClass(text, 'innerSortArea');
-   //$(text.node).data("requester_id", teamId);
-   text.attr({ 'text-anchor' : 'left' });
-   // text.click(clickCallbackRequestedTimeslot);
-}
-
 function createGraphic()
 {
    var teams = initTeams(theData.teams);
@@ -73,45 +35,12 @@ function createGraphic()
    var pixelPerDay = initTimelineHeadlines(startDate, endDate, theWidth, paper);
 
    iPos = 25;
-   // sal1 = Sort Area Level 1
-   var sal1YStart    = iPos - 3;
-   var sal1YEnd      = iPos - 3;
-   var currentTeamId;
-   var sal2YStart    = iPos - 3;
-   var sal2YEnd      = iPos - 3;
-   var currentRequesterId;
 
+   initTeamScopes(teams);
+   
    for( var i = 0; i < data.length; i++)
    {
-      var sal1Finished = currentTeamId      != null && currentTeamId      != data[i].requester.team.id;
-      var sal2Finished = currentRequesterId != null && currentRequesterId != data[i].requester.id;
-      
-      if(sal1Finished || sal2Finished)
-         {
-         iPos += 10;
-         }
-      
-      // If all requests of an old team are rendered and the current run has a new team,
-      // Paint the team's rect.
-      if(sal1Finished)
-      {
-         createSAL1(sal1YStart, iPos - 12, teams, currentTeamId);
-         sal1YStart = iPos - 5;
-
-      }
-      currentTeamId = data[i].requester.team.id;
-      
-
-      // If all requests of a requester are rendered and the current run has a new requester,
-      // Paint the requester's rect.
-      if(sal2Finished)
-      {
-         createSAL2(sal2YStart, iPos - 12, data[i-1].requester);
-         sal2YStart = iPos - 5;
-
-      }
-      currentRequesterId = data[i].requester.id;
-      
+      if (enteringRequestRendering(data[i],iPos)) {iPos += 10;}
 
       jPos = 0;
 
@@ -149,6 +78,8 @@ function createGraphic()
 
       var rect = paper.rect(x, y, width, height, 10);
       attachCssClass(rect, 'requested');
+      $(rect.node).data("req_id", data[i].id);
+      rect.click(clickCallbackRequestedTimeslot);
 
       var text = paper.text(x + (width / 2), y + 15, data[i].requester.firstName + ' '
             + data[i].requester.lastName + ' (' + teams[data[i].requester.team.id].fullName + ')');
@@ -173,15 +104,9 @@ function createGraphic()
       }
 
       iPos = y + height + 5;
-
-      // finalize outer sort
-      if(i >= data.length - 1)
-      {
-         iPos += 10;
-         createSAL1(sal1YStart, iPos - 12, teams, currentTeamId);
-         createSAL2(sal2YStart, iPos - 12, data[i-1].requester);
-      }
    }
+
+   if(finishedRequestRendering(iPos)) {iPos += 10;}
 
    paper.renderfix();
 
