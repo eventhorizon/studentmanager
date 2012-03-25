@@ -109,7 +109,7 @@ function createGraphic()
    if(finishedRequestRendering(iPos)) {iPos += 10;}
 
    paper.renderfix();
-
+   
    $('svg').attr("height", iPos);
 }
 
@@ -146,7 +146,8 @@ function preparePaper()
       }
 
       paper = Raphael('graphic', theWidth, 10000);
-      $('svg').removeAttr('height');
+
+      //$('svg').removeAttr('height');
 
       return 1;
    }
