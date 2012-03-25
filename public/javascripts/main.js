@@ -122,6 +122,14 @@ var theData;
 function preparePaper()
 {
    var newWidth = window.innerWidth;
+   
+   if (typeof(document.body.clientWidth) == 'number') {
+      newWidth = document.body.clientWidth;
+   } else {
+      $('#warningArea').show();
+      newWidth = window.innerWidth;
+   }
+   
    if(newWidth > 1366 || theWidth != 1366)
    {
       if(newWidth <= 1366)
@@ -147,7 +155,6 @@ function preparePaper()
 
 $(document).ready(function()
 {
-
    preparePaper();
    update();
 
